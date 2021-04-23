@@ -1,0 +1,111 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<title>Joy</title>
+	<meta charset="utf-8">
+	<meta name="description" content="Example page of use pure Javascript JoyStick">
+	<meta name="author" content="Roberto D'Amico">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+		integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+		crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+		crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+		crossorigin="anonymous"></script>
+	<style>
+		* {
+			box-sizing: border-box;
+		}
+
+		h2 {
+			border: 1px solid black;
+		}
+
+		body {
+			margin: 0px;
+			padding: 0px;
+			font-family: monospace;
+		}
+
+		.row {
+			display: inline-flex;
+			clear: both;
+		}
+
+		.columnLateral {
+			float: left;
+			width: 15%;
+			min-width: 300px;
+		}
+
+		h1 {
+			border: 1px solid black;
+			text-align: center;
+		}
+
+		h4 {
+			text-align: center;
+		}
+
+		.row {
+			padding: 5px;
+		}
+
+		div.form-group {
+			border: 1px solid black;
+			/* padding: 20px; */
+			width: 100%;
+			text-align: center;
+		}
+	</style>
+	<script src="joy.js"></script>
+</head>
+
+<body>
+	<div class="mt-5 container">
+		<div class="col-sm-12 text-primary">
+			<h1>Joy Stick</h1>
+			<h4 class="mt-4 mb-4 text-success" id='status-header'>Connecting to broker...</h4>
+		</div>
+
+		<div class="form-group">
+			<div class="row">
+				<div class="columnLateral ">
+					<div class="container mt-5 ">
+						<div id="joy1Div" style="width:200px;height:200px;"></div>
+					</div>
+					<div class="mt-4 text-danger">
+						Direzione:<input id="joy1Direzione" type="text" /><br />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="browserMqtt.js"></script>
+	<script type="text/javascript">
+		// Create JoyStick object into the DIV 'joy1Div'
+
+		var broker = 'wss://test.mosquitto.org:8081/mqtt';            // it is the broker 
+		var client = mqtt.connect(broker);         // the variable client was set to mqtt.connect and passes the broker
+		var status_header = document.getElementById('status-header') // it stored the document that gets the Element of Id named status-header
+		client.on('connect', function () {
+			status_header.innerHTML = 'Connected to ' + broker;  // client on connect function and passes the data of status_header  and prints the text containing Connected to concatenated with the broker into the page
+			console.log('Connected to ' + broker)
+		})
+		var Joy1 = new JoyStick('joy1Div');
+		var joy1Direzione = document.getElementById("joy1Direzione");
+		setInterval(function () {
+			var joystick = joy1Direzione.value = Joy1.GetDir(); // var joystick gets the value of the joy1Direzione.value = Joy1.GetDir() to have an interval of every point in joystick
+			client.publish("joystickguian", joystick) // setting client publish topic to joystickguian and the payload which is stored in var joystck
+		}, 50);
+
+
+	</script>
+</body>
+
+</html>
